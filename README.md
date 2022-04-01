@@ -1,0 +1,2 @@
+# phoenixProjectNode
+ Backend for TechnicalApp
