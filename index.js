@@ -1,5 +1,9 @@
+require('dotenv').config()
+require('./mongo')
 const express = require('express')
 const cors = require('cors')
+const Person = require('./models/Person')
+
 const notFound = require('./middleware/notFound.js')
 const handleErrors = require('./middleware/handleErrors.js')
 //const userExtractor = require('./middleware/userExtractor')
@@ -20,7 +24,16 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/test', (request, response) => {
-  response.json(arrayTest)
+  Person.find({}).then(result => {
+    console.log(result)
+    result.forEach((a) => {
+      a.rut = 'test'
+    })
+    const newResult = [... result, [{ test: 'jejeje'}, {hola: 'sdfksdlf'}]]
+    response.json(newResult)
+  })
+  //mongoose.connection.close()
+  //response.json(person)
 })
 
 app.get('/api/test/:id', (request, response) => {
