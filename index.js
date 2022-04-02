@@ -6,34 +6,75 @@ const Person = require('./models/Person')
 
 const notFound = require('./middleware/notFound.js')
 const handleErrors = require('./middleware/handleErrors.js')
+const Categoria = require('./models/Categoria')
+const Factura = require('./models/Factura') 
+const Cotizacion = require('./models/Cotizacion')
+const LogStock = require('./models/LogStock')
+const Medida = require('./models/Medida')
+const Producto = require('./models/Producto')
+const Region = require('./models/Region')
+const Reserva = require('./models/Reserva')
 //const userExtractor = require('./middleware/userExtractor')
 
 const app = express()
 app.use(cors())
 
-let arrayTest = [
-  {
-    id: 'tesdast'
-  },
-  {
-    id: '1231asdd2'
-  }
-]
 app.get('/', (request, response) => {
   response.send('<h1>test</h1>')
 })
 
-app.get('/api/test', (request, response) => {
+app.get('/api/personas', (request, response) => {
   Person.find({}).then(result => {
-    console.log(result)
-    result.forEach((a) => {
-      a.rut = 'test'
-    })
-    const newResult = [... result, [{ test: 'jejeje'}, {hola: 'sdfksdlf'}]]
-    response.json(newResult)
+    response.json(result)
   })
-  //mongoose.connection.close()
-  //response.json(person)
+})
+
+app.get('/api/categorias', (request, response) => {
+  Categoria.find({}).then(result => {
+    response.json(result)
+  })
+})
+
+app.get('/api/facturas', (request, response) => {
+  Factura.find({}).then(result => {
+    response.json(result)
+  })
+})
+
+app.get('/api/cotizaciones', (request, response) => {
+  Cotizacion.find({}).then(result => {
+    response.json(result)
+  })
+})
+
+app.get('/api/log', (request, response) => {
+  LogStock.find({}).then(result => {
+    response.json(result)
+  })
+})
+
+app.get('/api/medidas', (request, response) => {
+  Medida.find({}).then(result => {
+    response.json(result)
+  })
+})
+
+app.get('/api/productos', (request, response) => {
+  Producto.find({}).then(result => {
+    response.json(result)
+  })
+})
+
+app.get('/api/regiones', (request, response) => {
+  Region.find({}).then(result => {
+    response.json(result)
+  })
+})
+
+app.get('/api/reservas', (request, response) => {
+  Reserva.find({}).then(result => {
+    response.json(result)
+  })
 })
 
 app.get('/api/test/:id', (request, response) => {
