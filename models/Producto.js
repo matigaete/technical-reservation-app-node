@@ -7,9 +7,9 @@ const productoSchema = new Schema({
   precioActual: Number,
   stock: Number,
   stockCritico: Number,
-  tipoProducto: Number,
-  categoria: Number,
-  umedida: Number,
+  tipoProducto: String,
+  categoria: String,
+  umedida: String,
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User'

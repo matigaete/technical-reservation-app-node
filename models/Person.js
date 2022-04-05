@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose')
 const personSchema = new Schema({
   rut: String,
   nombre: String,
-  tipo: Number,
+  tipo: String,
   giro: String,
   region: String,
   provincia: String,

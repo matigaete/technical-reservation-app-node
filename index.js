@@ -2,10 +2,13 @@ require('dotenv').config()
 require('./mongo')
 const express = require('express')
 const cors = require('cors')
-const Person = require('./models/Person')
+const bodyParser = require('body-parser')
 
 const notFound = require('./middleware/notFound.js')
 const handleErrors = require('./middleware/handleErrors.js')
+//const userExtractor = require('./middleware/userExtractor')
+
+const Person = require('./models/Person')
 const Categoria = require('./models/Categoria')
 const Factura = require('./models/Factura') 
 const Cotizacion = require('./models/Cotizacion')
@@ -14,9 +17,9 @@ const Medida = require('./models/Medida')
 const Producto = require('./models/Producto')
 const Region = require('./models/Region')
 const Reserva = require('./models/Reserva')
-//const userExtractor = require('./middleware/userExtractor')
 
 const app = express()
+app.use(bodyParser.json())
 app.use(cors())
 
 app.get('/', (request, response) => {
@@ -29,10 +32,67 @@ app.get('/api/personas', (request, response) => {
   })
 })
 
+app.get('/api/personas/:id', (request, response) => {
+  const id = request.params.id
+  Person.findOne({ 'rut' : id }, 'rut nombre').then((result) => {
+    console.log(result)
+    if (result) {
+      response.json(result)
+    } else {
+      response.status(204).end()
+    }
+  })
+})
+
+app.post('/api/personas', async (request, response, next) => {
+  const person = request.body
+  if (!person) {
+    return response.status(400).json({
+      error: 'mamó'
+    })
+  }
+  const newPerson = new Person({
+    rut: person.rut,
+    nombre: person.nombre,
+    direccion: person.direccion,
+    contacto: person.contacto,
+    email: person.email,
+    giro: person.giro,
+    comuna: person.comuna,
+    provincia: person.provincia.nombre,
+    region: person.region.nombre,
+    tipo: person.tipo
+  })
+  try {
+    const savedPerson = await newPerson.save()
+    response.json(savedPerson)
+  } catch (error) {
+    next(error)
+  }
+})
+
 app.get('/api/categorias', (request, response) => {
   Categoria.find({}).then(result => {
     response.json(result)
   })
+})
+
+app.post('/api/categorias', async (request, response, next) => {
+  const category = request.body
+  if (!category) {
+    return response.status(400).json({
+      error: 'mamó'
+    })
+  }
+  const newCategory = new Categoria({
+    nombre: category.nombre,
+  })
+  try {
+    const savedCategory = await newCategory.save()
+    response.json(savedCategory)
+  } catch (error) {
+    next(error)
+  }
 })
 
 app.get('/api/facturas', (request, response) => {
@@ -65,6 +125,33 @@ app.get('/api/productos', (request, response) => {
   })
 })
 
+app.post('/api/productos', async (request, response, next) => {
+  const product = request.body
+  console.log(product)
+  if (!product) {
+    return response.status(400).json({
+      error: 'mamó'
+    })
+  }
+  const newProduct = new Producto({
+    idProducto: product.codigo,
+    nombre: product.nombre,
+    descripcion: product.descripcion,
+    precioActual: product.precioCompra,
+    stock: product.stock,
+    stockCritico: product.stockCritico,
+    tipoProducto: 'P',
+    categoria: product.categoria,
+    umedida: product.umedida ? product.umedida : 'NA',
+  })
+  try {
+    const savedProduct = await newProduct.save()
+    response.json(savedProduct)
+  } catch (error) {
+    next(error)
+  }
+})
+
 app.get('/api/regiones', (request, response) => {
   Region.find({}).then(result => {
     response.json(result)
@@ -77,36 +164,9 @@ app.get('/api/reservas', (request, response) => {
   })
 })
 
-app.get('/api/test/:id', (request, response) => {
-  const id = request.params.id
-  console.log(id)
-  const array = arrayTest.find(a => a.id === id)
-  if (array) {
-    response.json(array)
-  } else {
-    response.status(404).end()
-  }  
-})
-
 app.delete('/api/test/:id', (request, response) => {
-  const id = request.params.id
-  let newTest = arrayTest.filter(a => a.id !== id)
-  response.json(newTest)
-})
-
-app.post('/api/test', (request, response) => {
-
-  const test = request.body
-  if (!test || !test.content) {
-    return response.status(400).json({
-      error: 'mamó'
-    })
-  }
-  const newTest ={
-    id: 'jejejej',
-    prueba : 'funciona'
-  }
-  arrayTest = [... arrayTest, newTest]
+  //const id = request.params.id
+  let newTest = ''//arrayTest.filter(a => a.id !== id)
   response.json(newTest)
 })
 
