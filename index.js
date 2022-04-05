@@ -101,6 +101,42 @@ app.get('/api/facturas', (request, response) => {
   })
 })
 
+app.post('/api/facturas', async (request, response, next) => {
+  const factura = request.body
+  if (!factura) {
+    return response.status(400).json({
+      error: 'mamó'
+    })
+  }
+
+  const detailList = []
+  factura.detalle.forEach(detail => {
+    detailList.push({
+      idProducto: detail.producto.idProducto,
+      precioCompra: detail.producto.precioVenta,
+      cantidad: detail.cantidad,
+      subtotal: detail.subtotal
+    })
+  });
+
+  const newFactura = new Factura({
+    codFactura: factura.codFactura,
+    fecha: factura.fecha,
+    rutPersona: factura.persona.rut,
+    tipo: factura.tipo,
+    montoNeto: factura.neto,
+    iva: factura.iva,
+    total: factura.total,
+    detalle: detailList,
+  })
+  try {
+    const savedFactura = await newFactura.save()
+    response.json(savedFactura)
+  } catch (error) {
+    next(error)
+  }
+})
+
 app.get('/api/cotizaciones', (request, response) => {
   Cotizacion.find({}).then(result => {
     response.json(result)
@@ -119,15 +155,46 @@ app.get('/api/medidas', (request, response) => {
   })
 })
 
+app.post('/api/medidas', async (request, response, next) => {
+  const um = request.body
+  if (!um) {
+    return response.status(400).json({
+      error: 'mamó'
+    })
+  }
+  const newUm = new Medida({
+    nombre: um.nombre,
+  })
+  try {
+    const savedUm = await newUm.save()
+    response.json(savedUm)
+  } catch (error) {
+    next(error)
+  }
+})
+
 app.get('/api/productos', (request, response) => {
   Producto.find({}).then(result => {
     response.json(result)
   })
 })
 
+app.get('/api/productos/:id', (request, response) => {
+  const id = request.params.id
+  const tipo = 'P'
+  console.log(id)
+  Producto.findOne({ 'idProducto' : id, 'tipoProducto': tipo }, 'idProducto nombre precioActual precioVenta stock').then((result) => {
+    console.log(result)
+    if (result) {
+      response.json(result)
+    } else {
+      response.status(204).end()
+    }
+  })
+})
+
 app.post('/api/productos', async (request, response, next) => {
   const product = request.body
-  console.log(product)
   if (!product) {
     return response.status(400).json({
       error: 'mamó'

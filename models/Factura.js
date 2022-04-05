@@ -1,9 +1,10 @@
 const { Schema, model } = require('mongoose')
 
 const facturaSchema = new Schema({
-  codigo: Number, 
-  rutProveedor: String,
+  codFactura: Number, 
+  rutPersona: String,
   fecha: Date,
+  tipo: String,
   montoNeto: Number,
   iva: Number,
   total: Number,
