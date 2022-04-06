@@ -1,23 +1,31 @@
 require('dotenv').config()
 require('./mongo')
+
 const express = require('express')
 const cors = require('cors')
-const routes = require('./routes/routes.js')
-const personRoutes = require('./routes/personRoutes.js')
 const bodyParser = require('body-parser')
+
+const categoryRoutes = require('./routes/categoryRoutes.js')
+const documentRoutes = require('./routes/documentRoutes.js')
+const personRoutes = require('./routes/personRoutes.js')
+const productRoutes = require('./routes/productRoutes.js')
 
 const notFound = require('./middleware/notFound.js')
 const handleErrors = require('./middleware/handleErrors.js')
 //const userExtractor = require('./middleware/userExtractor')
 
 const app = express()
+
 app.use(bodyParser.json())
 app.use(cors())
-app.use(routes)
+
+app.use(categoryRoutes)
+app.use(documentRoutes)
 app.use(personRoutes)
+app.use(productRoutes)
 
 app.get('/', (request, response) => {
-  response.send('<h1>test</h1>')
+  response.send('<h1>API</h1>')
 })
 
 app.use(notFound)
