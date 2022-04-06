@@ -9,7 +9,8 @@ const facturaSchema = new Schema({
   iva: Number,
   total: Number,
   detalle: [{
-    idProducto: Number,
+    id: String,
+    tipo: String,
     precioCompra: Number,
     cantidad: Number,
     subtotal: Number,

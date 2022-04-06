@@ -7,8 +7,8 @@ const cotizacionSchema = new Schema({
   iva: Number,
   total: Number,
   detalle: [{
-    idProducto: Number,
-    tipoDetalle: Number,
+    id: Number,
+    tipo: Number,
     precioVenta: Number,
     cantidad: Number,
     subtotal: Number,

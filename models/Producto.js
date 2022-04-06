@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose')
 
 const productoSchema = new Schema({
-  idProducto: Number, 
+  id: String, 
   nombre: String,
   descripcion: String,
   precioVenta: Number,
@@ -19,8 +19,6 @@ const productoSchema = new Schema({
 
 productoSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id
-    delete returnedObject._id
     delete returnedObject.__v
   }
 })
