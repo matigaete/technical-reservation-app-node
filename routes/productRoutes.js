@@ -55,6 +55,19 @@ productRouter.get('/api/productos/:id', (request, response) => {
   })
 })
 
+productRouter.get('/api/:category/productos/', (request, response) => {
+  const id = request.params.category
+  const tipo = 'P'
+  Producto.find(
+    { categoria: id, tipoProducto: tipo }).then((result) => {
+    if (result) {
+      response.json(result)
+    } else {
+      response.status(204).end()
+    }
+  })
+})
+
 productRouter.post('/api/productos', async (request, response, next) => {
   const product = request.body
   if (!product) {
@@ -66,7 +79,8 @@ productRouter.post('/api/productos', async (request, response, next) => {
     id: product.id,
     nombre: product.nombre,
     descripcion: product.descripcion,
-    precioActual: product.precioCompra,
+    precioCompra: product.precioCompra,
+    precioVenta: product.precioVenta,
     stock: product.stock,
     stockCritico: product.stockCritico,
     tipoProducto: 'P',
@@ -82,6 +96,39 @@ productRouter.post('/api/productos', async (request, response, next) => {
   }
 })
 
+productRouter.put('/api/productos', (request, response) => {
+  const product = request.body
+  Producto.findOneAndUpdate(
+    {id: product.id, tipo: 'P'}, 
+    { nombre: product.nombre,
+      descripcion: product.descripcion,
+      categoria: product.categoria,
+      stock: product.stock,
+      stockCritico: product.stockCritico,
+      precioCompra: product.precioCompra,
+      precioVenta: product.precioVenta 
+    })
+    .then((result) => {
+      if (result) {
+        response.status(200).end()
+      } else {
+        response.status(405).end()
+      }
+    })
+})
+
+productRouter.delete('/api/productos/:id', (request, response) => {
+  const id = request.params.id
+  Producto.findOneAndDelete({id: id, tipo: 'P'}).then((result) => {
+    if (result) {
+      response.status(204).end()
+    } else {
+      response.status(405).end()
+    }
+    
+  })
+})
+
 productRouter.get('/api/servicios', (request, response) => {
   Producto.find({ tipoProducto: 'S' }).then((result) => {
     response.json(result)
@@ -90,7 +137,7 @@ productRouter.get('/api/servicios', (request, response) => {
 
 productRouter.get('/api/servicios/:id', (request, response) => {
   const id = request.params.id
-  Producto.findOne({ id: id, tipoProducto: 'S' }, 'id nombre precioVenta').then(
+  Producto.findOne({ id: id, tipoProducto: 'S' }, 'id nombre descripcion precioVenta').then(
     (result) => {
       if (result) {
         response.json(result)
@@ -121,12 +168,6 @@ productRouter.post('/api/servicios', async (request, response, next) => {
   } catch (error) {
     next(error)
   }
-})
-
-productRouter.delete('/api/test/:id', (request, response) => {
-  //const id = request.params.id
-  let newTest = '' //arrayTest.filter(a => a.id !== id)
-  response.json(newTest)
 })
 
 module.exports = productRouter

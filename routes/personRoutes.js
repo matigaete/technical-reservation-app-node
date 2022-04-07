@@ -4,15 +4,43 @@ const personRouter = express.Router()
 const Person = require('../models/Person')
 const Region = require('../models/Region')
 
-personRouter.get('/api/personas', (request, response) => {
-  Person.find({}).then((result) => {
+personRouter.get('/api/personas/:tipo', (request, response) => {
+  const tipo = request.params.tipo
+  Person.find({tipo: tipo}).then((result) => {
     response.json(result)
   })
 })
 
-personRouter.get('/api/personas/:id', (request, response) => {
+personRouter.get('/api/personas/:id/:tipo', (request, response) => {
   const id = request.params.id
-  Person.findOne({ rut: id }).then((result) => {
+  const tipo = request.params.tipo
+  Person.findOne({ rut: id, tipo: tipo }).then((result) => {
+    if (result) {
+      response.json(result)
+    } else {
+      response.status(204).end()
+    }
+  })
+})
+
+personRouter.get('/api/clientes/:id', (request, response) => {
+  const id = request.params.id
+  console.log(id)
+  Person.find({ rut: { $regex: '.*' + id + '.*' }, tipo: 'C' }).then((result) => {
+    console.log(result)
+    if (result) {
+      response.json(result)
+    } else {
+      response.status(204).end()
+    }
+  })
+})
+
+personRouter.get('/api/proveedores/:id', (request, response) => {
+  const id = request.params.id
+  console.log(id)
+  Person.find({ rut: { $regex: '.*' + id + '.*' }, tipo: 'P' }).then((result) => {
+    console.log(result)
     if (result) {
       response.json(result)
     } else {

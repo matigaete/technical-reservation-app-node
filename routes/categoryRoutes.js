@@ -27,4 +27,17 @@ categoryRouter.post('/api/categorias', async (request, response, next) => {
   }
 })
 
+categoryRouter.put('/api/categorias', (request, response) => {
+  const category = request.body
+  Categoria.findByIdAndUpdate(category.id, { nombre: category.nombre }).then((result) => {
+    response.json(result)
+  })
+})
+
+categoryRouter.delete('/api/categorias/:id', (request, response) => {
+  Categoria.find({}).then((result) => {
+    response.json(result)
+  })
+})
+
 module.exports = categoryRouter
