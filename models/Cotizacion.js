@@ -1,14 +1,16 @@
 const { Schema, model } = require('mongoose')
 
 const cotizacionSchema = new Schema({
+  codCotizacion: Number,
   rutCliente: String,
   fecha: Date,
+  tipo: String,
   montoNeto: Number,
   iva: Number,
   total: Number,
   detalle: [{
-    id: Number,
-    tipo: Number,
+    id: String,
+    tipo: String,
     precioVenta: Number,
     cantidad: Number,
     subtotal: Number,
