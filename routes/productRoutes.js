@@ -5,6 +5,11 @@ const LogStock = require('../models/LogStock')
 const Medida = require('../models/Medida')
 const Producto = require('../models/Producto')
 
+const tipoProducto = {
+  Producto: 'P',
+  Servicio: 'S'
+}
+
 productRouter.get('/api/log', (request, response) => {
   LogStock.find({}).then((result) => {
     response.json(result)
@@ -36,14 +41,14 @@ productRouter.post('/api/medidas', async (request, response, next) => {
 })
 
 productRouter.get('/api/productos', (request, response) => {
-  Producto.find({ tipoProducto: 'P' }).then((result) => {
+  Producto.find({ tipoProducto: tipoProducto.Producto }).then((result) => {
     response.json(result)
   })
 })
 
 productRouter.get('/api/productos/:id', (request, response) => {
   const id = request.params.id
-  const tipo = 'P'
+  const tipo = tipoProducto.Producto
   Producto.findOne(
     { id: id, tipoProducto: tipo }, 'id nombre descripcion precioVenta precioCompra stock'
   ).then((result) => {
@@ -57,7 +62,7 @@ productRouter.get('/api/productos/:id', (request, response) => {
 
 productRouter.get('/api/:category/productos/', (request, response) => {
   const id = request.params.category
-  const tipo = 'P'
+  const tipo = tipoProducto.Producto
   Producto.find(
     { categoria: id, tipoProducto: tipo }).then((result) => {
     if (result) {
@@ -83,7 +88,7 @@ productRouter.post('/api/productos', async (request, response, next) => {
     precioVenta: product.precioVenta,
     stock: product.stock,
     stockCritico: product.stockCritico,
-    tipoProducto: 'P',
+    tipoProducto: tipoProducto.Producto,
     categoria: product.categoria,
     umedida: product.umedida ? product.umedida : 'NA',
   })
@@ -99,7 +104,7 @@ productRouter.post('/api/productos', async (request, response, next) => {
 productRouter.put('/api/productos', (request, response) => {
   const product = request.body
   Producto.findOneAndUpdate(
-    {id: product.id, tipo: 'P'}, 
+    {id: product.id, tipo: tipoProducto.Producto}, 
     { nombre: product.nombre,
       descripcion: product.descripcion,
       categoria: product.categoria,
@@ -119,7 +124,7 @@ productRouter.put('/api/productos', (request, response) => {
 
 productRouter.delete('/api/productos/:id', (request, response) => {
   const id = request.params.id
-  Producto.findOneAndDelete({id: id, tipo: 'P'}).then((result) => {
+  Producto.findOneAndDelete({id: id, tipo: tipoProducto.Producto}).then((result) => {
     if (result) {
       response.status(204).end()
     } else {
@@ -130,14 +135,14 @@ productRouter.delete('/api/productos/:id', (request, response) => {
 })
 
 productRouter.get('/api/servicios', (request, response) => {
-  Producto.find({ tipoProducto: 'S' }).then((result) => {
+  Producto.find({ tipoProducto: tipoProducto.Servicio }).then((result) => {
     response.json(result)
   })
 })
 
 productRouter.get('/api/servicios/:id', (request, response) => {
   const id = request.params.id
-  Producto.findOne({ id: id, tipoProducto: 'S' }, 'id nombre descripcion precioVenta').then(
+  Producto.findOne({ id: id, tipoProducto: tipoProducto.Servicio }, 'id nombre descripcion precioVenta').then(
     (result) => {
       if (result) {
         response.json(result)
@@ -160,7 +165,7 @@ productRouter.post('/api/servicios', async (request, response, next) => {
     nombre: service.nombre,
     descripcion: service.descripcion,
     precioVenta: service.precioVenta,
-    tipoProducto: 'S',
+    tipoProducto: tipoProducto.Servicio,
   })
   try {
     const savedService = await newService.save()

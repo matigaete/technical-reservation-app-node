@@ -5,6 +5,11 @@ const personRouter = express.Router()
 const Person = require('../models/Person')
 const Region = require('../models/Region')
 
+const tipoPersona = {
+  Proveedor: 'P',
+  Cliente: 'C'
+}
+
 personRouter.get('/api/personas/:tipo', (request, response) => {
   const tipo = request.params.tipo
   Person.find({tipo: tipo}).then((result) => {
@@ -26,7 +31,8 @@ personRouter.get('/api/personas/:id/:tipo', (request, response) => {
 
 personRouter.get('/api/clientes/:id', (request, response) => {
   const id = request.params.id
-  Person.find({ rut: { $regex: '.*' + id + '.*' }, tipo: 'C' }).then((result) => {
+  Person.find({ rut: { $regex: '.*' + id + '.*' }, tipo: tipoPersona.Cliente }).then((result) => {
+    console.log(result)
     if (result) {
       response.json(result)
     } else {
@@ -37,7 +43,8 @@ personRouter.get('/api/clientes/:id', (request, response) => {
 
 personRouter.get('/api/proveedores/:id', (request, response) => {
   const id = request.params.id
-  Person.find({ rut: { $regex: '.*' + id + '.*' }, tipo: 'P' }).then((result) => {
+  Person.find({ rut: { $regex: '.*' + id + '.*' }, tipo: tipoPersona.Proveedor }).then((result) => {
+    console.log(result)
     if (result) {
       response.json(result)
     } else {
