@@ -87,7 +87,7 @@ personRouter.get('/api/regiones', (request, response) => {
 })
 
 personRouter.post('/sendmail', (request, response) => {
-  const { MAIL_USERNAME, MAIL_PASSWORD, MAIL_TEST, SERVICE } = process.env
+  const { MAIL_USERNAME, MAIL_PASSWORD, MAIL_TO, SERVICE } = process.env
   const formulario = request.body
   let transporter = nodemailer.createTransport({
     service: SERVICE,
@@ -99,7 +99,7 @@ personRouter.post('/sendmail', (request, response) => {
   })
   const mailOptions = {
     from: `Adjunto factura Nro. ${formulario.name}`,
-    to: MAIL_TEST,
+    to: MAIL_TO,
     subject: formulario.idFactura,
     html: `<strong>Nombre:</strong> ${formulario.name} <br/>
            <strong>E-mail:</strong> ${formulario.email} <br/>

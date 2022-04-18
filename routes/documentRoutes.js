@@ -6,6 +6,11 @@ const Cotizacion = require('../models/Cotizacion')
 const Producto = require('../models/Producto')
 const Reserva = require('../models/Reserva')
 
+const tipoProducto = {
+  Insumo: 'P',
+  Servicio: 'S'
+}
+
 documentRouter.get('/api/facturas', (request, response) => {
   Factura.find({}).then((result) => {
     response.json(result)
@@ -22,10 +27,10 @@ documentRouter.post('/api/facturas', (request, response, next) => {
   }
 
   factura.detalle.forEach((detail) => {
-    if (detail.tipo === 'P') {
+    if (detail.tipo === tipoProducto.Insumo) {
       Producto.findOneAndUpdate({
         id: detail.producto.id, 
-        tipoProducto: 'P'
+        tipoProducto: tipoProducto.Insumo
       }, 
       { 
         stock: detail.producto.stock - detail.cantidad 
@@ -46,9 +51,9 @@ documentRouter.post('/api/facturas', (request, response, next) => {
     lastCode = Math.max(... listCodes) + 1
     const detailList = []
     factura.detalle.forEach((detail) => {
-      const id = detail.tipo === 'P' ? detail.producto.id : detail.servicio.id
+      const id = detail.tipo === tipoProducto.Insumo ? detail.producto.id : detail.servicio.id
       const precio =
-        detail.tipo === 'P'
+        detail.tipo === tipoProducto.Insumo
           ? detail.producto.precioVenta
           : detail.servicio.precioVenta
       detailList.push({
@@ -95,10 +100,10 @@ documentRouter.post('/api/cotizaciones', (request, response, next) => {
   }
 
   cotizacion.detalle.forEach((detail) => {
-    if (detail.tipo === 'P') {
+    if (detail.tipo === tipoProducto.Insumo) {
       Producto.findOneAndUpdate({
         id: detail.producto.id, 
-        tipoProducto: 'P'
+        tipoProducto: tipoProducto.Insumo
       }, 
       { 
         stock: detail.producto.stock - detail.cantidad 
@@ -119,9 +124,9 @@ documentRouter.post('/api/cotizaciones', (request, response, next) => {
     lastCode = Math.max(... listCodes) + 1
     const detailList = []
     cotizacion.detalle.forEach((detail) => {
-      const id = detail.tipo === 'P' ? detail.producto.id : detail.servicio.id
+      const id = detail.tipo === tipoProducto.Insumo ? detail.producto.id : detail.servicio.id
       const precio =
-        detail.tipo === 'P'
+        detail.tipo === tipoProducto.Insumo
           ? detail.producto.precioVenta
           : detail.servicio.precioVenta
       detailList.push({
