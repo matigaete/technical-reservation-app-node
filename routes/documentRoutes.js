@@ -29,8 +29,8 @@ documentRouter.post('/api/facturas', (request, response, next) => {
       }, 
       { 
         stock: detail.producto.stock - detail.cantidad 
-      }).then((e) => {
-        console.log(e)
+      }).then(() => {
+        //console.log(e)
       })
     }
   })

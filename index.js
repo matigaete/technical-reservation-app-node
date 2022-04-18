@@ -3,7 +3,6 @@ require('./mongo')
 
 const express = require('express')
 const cors = require('cors')
-const bodyParser = require('body-parser')
 
 const categoryRoutes = require('./routes/categoryRoutes.js')
 const documentRoutes = require('./routes/documentRoutes.js')
@@ -16,7 +15,7 @@ const handleErrors = require('./middleware/handleErrors.js')
 
 const app = express()
 
-app.use(bodyParser.json())
+app.use(express.json({limit: '50mb'}))
 app.use(cors())
 
 app.use(categoryRoutes)

@@ -1,4 +1,5 @@
 const express = require('express')
+const nodemailer = require('nodemailer')
 const personRouter = express.Router()
 
 const Person = require('../models/Person')
@@ -25,9 +26,7 @@ personRouter.get('/api/personas/:id/:tipo', (request, response) => {
 
 personRouter.get('/api/clientes/:id', (request, response) => {
   const id = request.params.id
-  console.log(id)
   Person.find({ rut: { $regex: '.*' + id + '.*' }, tipo: 'C' }).then((result) => {
-    console.log(result)
     if (result) {
       response.json(result)
     } else {
@@ -38,9 +37,7 @@ personRouter.get('/api/clientes/:id', (request, response) => {
 
 personRouter.get('/api/proveedores/:id', (request, response) => {
   const id = request.params.id
-  console.log(id)
   Person.find({ rut: { $regex: '.*' + id + '.*' }, tipo: 'P' }).then((result) => {
-    console.log(result)
     if (result) {
       response.json(result)
     } else {
@@ -79,6 +76,41 @@ personRouter.post('/api/personas', async (request, response, next) => {
 personRouter.get('/api/regiones', (request, response) => {
   Region.find({}).then((result) => {
     response.json(result)
+  })
+})
+
+personRouter.post('/sendmail', (request, response) => {
+  const { MAIL_USERNAME, MAIL_PASSWORD, MAIL_TEST, SERVICE } = process.env
+  const formulario = request.body
+  let transporter = nodemailer.createTransport({
+    service: SERVICE,
+    secure: true,
+    auth: {
+      user: MAIL_USERNAME,
+      pass: MAIL_PASSWORD
+    }
+  })
+  const mailOptions = {
+    from: `Adjunto factura Nro. ${formulario.name}`,
+    to: MAIL_TEST,
+    subject: formulario.idFactura,
+    html: `<strong>Nombre:</strong> ${formulario.name} <br/>
+           <strong>E-mail:</strong> ${formulario.email} <br/>
+           <strong>Mensaje:</strong> ${formulario.mensaje}`,
+    attachments: [
+      {
+        filename: `${formulario.idFactura}.pdf`,
+        path: formulario.pdf,
+        contentType: 'application/pdf',
+        encoding: 'base64'
+      }
+    ]
+  }
+  transporter.sendMail(mailOptions, function (err, info) {
+    if (err)
+      response.json(err)
+    else
+      response.json(info)
   })
 })
 
